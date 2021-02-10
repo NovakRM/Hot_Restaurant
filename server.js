@@ -3,6 +3,7 @@ let express = require("express");
 let path = require("path");
 let fs = require('fs');
 const { json } = require("express");
+const { resolve } = require("path");
 
 // initiate Express and set the Port 
 var app = express();
@@ -40,103 +41,106 @@ app.get("/api/waitList", function(req, res) {
   });
 
 app.get("/tables", function(req, res) {
-    fs.writeFile("./tables.html",
+    //return new Promise (function(resolve,reject){
+        fs.writeFile("./tables.html",
     
-    //template starts here 
-            //${showTables()}
-            //${showWaitList()}
-    `
-                <head>
-                <meta charset="UTF-8">
-                <title>Tables Page</title>
-            
-                <!-- Latest compiled and minified CSS & JS -->
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-                <script src="https://code.jquery.com/jquery.js"></script>
-                <script src="https://use.fontawesome.com/a590d3a2e5.js"></script>
-                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-            
-            </head>
-            <body>
-
-                <div class="container">
-            
-                <div class="jumbotron">
-                    <h1 class="text-center"><i class="fa fa-fire"></i> Hot Restaurant</h1>
-                    <hr>
-                    <h2 class="text-center">Current Reservations and Waiting List</h2>
-                    <br>
-            
-                    <div class="text-center">
-                    <a href="/reserve"><button class="btn btn-lg btn-danger"><i class="fa fa-credit-card"></i> Make Reservation</button></a>
-                    <a href="/"><button class="btn btn-lg btn-default"><i class="fa fa-home"></i></button></a>
-                    </div>
-                </div>
-            
-                <div class="row">
-                    <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                        <h4>Current Reservations</h4>
-                        </div>
-                        <div class="card-body">
-                        ${showTables()}
-                        </div>
-                    </div>
-
-                    <div class="card mt-4">
-                        <div class="card-header">
-                        <h4>Waiting List</h4>
-                        </div>
-                        <div class="card-body">
-                        ${showWaitList()}
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            
-            
-                <footer class="footer mt-4">
+        //template starts here 
+                //${showTables()}
+                //${showWaitList()}
+        `
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>Tables Page</title>
+                
+                    <!-- Latest compiled and minified CSS & JS -->
+                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+                    <script src="https://code.jquery.com/jquery.js"></script>
+                    <script src="https://use.fontawesome.com/a590d3a2e5.js"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+                
+                </head>
+                <body>
+    
                     <div class="container">
-                    <p><a href="#" id="clear">Clear Table</a> | <a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API
-                        Wait List</a>
-                    </p></div>
-                </footer>
-            
-                </div>
-            <script>
-
-            </script>
-            </body>
-    `
-    //template ends here 
-   
-    )
-    res.sendFile(path.join(__dirname, "./tables.html"));
+                
+                    <div class="jumbotron">
+                        <h1 class="text-center"><i class="fa fa-fire"></i> Hot Restaurant</h1>
+                        <hr>
+                        <h2 class="text-center">Current Reservations and Waiting List</h2>
+                        <br>
+                
+                        <div class="text-center">
+                        <a href="/reserve"><button class="btn btn-lg btn-danger"><i class="fa fa-credit-card"></i> Make Reservation</button></a>
+                        <a href="/"><button class="btn btn-lg btn-default"><i class="fa fa-home"></i></button></a>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                            <h4>Current Reservations</h4>
+                            </div>
+                            <div class="card-body">
+                            ${showTables()}
+                            </div>
+                        </div>
+    
+                        <div class="card mt-4">
+                            <div class="card-header">
+                            <h4>Waiting List</h4>
+                            </div>
+                            <div class="card-body">
+                            ${showWaitList()}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                
+                
+                    <footer class="footer mt-4">
+                        <div class="container">
+                        <p><a href="/api/clearTables" id="clear">Clear Table</a> | <a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API
+                            Wait List</a>
+                        </p></div>
+                    </footer>
+                
+                    </div>
+                <script>
+    
+                </script>
+                </body>
+        `
+        //template ends here 
+       
+        ,()=>{
+            res.sendFile(path.join(__dirname, "./tables.html"))
+        })
   });
 
 //Card Build Functions 
 function showTables(){
+    let currentTables = [] 
     if (tables){
-      let currentTables = [] 
         for (let i=0;i<tables.length; i++){
             currentTables.push(
             `
-            <ul id="tableList" class="list-group"><li class="list-group-item mt-4"><h2>Table #1</h2><hr><h2>ID: ${table[i].id}</h2><h2>Name: ${table[i].name}</h2><h2>Email: ${table[i].email}</h2><h2>Phone: ${table[i].phone}</h2></li></ul>
+            <ul id="tableList" class="list-group"><li class="list-group-item mt-4"><h2>Table ${i+1}</h2><hr><h2>ID: ${tables[i].id}</h2><h2>Name: ${tables[i].name}</h2><h2>Email: ${tables[i].email}</h2><h2>Phone: ${tables[i].phone}</h2></li></ul>
             
             `)
         }
+        
     }
     return currentTables.join('')
 }
 
 function showWaitList(){
+    let currentList = [] 
     if (waitList){
-      let currentList = [] 
         for (let i=0;i<waitList.length; i++){
             currentList.push(
             `
-            <ul id="waitList" class="list-group"><li class="list-group-item mt-4"><h2>Table #1</h2><hr><h2>ID: ${waitList[i].id}</h2><h2>Name: ${waitList[i].name}</h2><h2>Email: ${waitList[i].email}</h2><h2>Phone: ${waitList[i].phone}</h2></li></ul>
+            <ul id="waitList" class="list-group"><li class="list-group-item mt-4"><h2>Reservation ${i+1}</h2><hr><h2>ID: ${waitList[i].id}</h2><h2>Name: ${waitList[i].name}</h2><h2>Email: ${waitList[i].email}</h2><h2>Phone: ${waitList[i].phone}</h2></li></ul>
             
             `)
         }
@@ -148,8 +152,8 @@ function showWaitList(){
 //POSTs
 app.post("/api/tables", function(req, res) {
     let tableRequest = req.body;
-    console.log(tableRequest);
-    if (tables.length<= 5){
+    //console.log(tableRequest);
+    if (tables.length < 5){
         tables.push(tableRequest)
     }else{
         waitList.push(tableRequest)
@@ -166,7 +170,7 @@ app.post("/api/tables", function(req, res) {
   });
 
 //DELETEs
-app.delete("/api/clearTables", function(req,res){
+app.get("/api/clearTables", function(req,res){
     tables = []
     waitList = []
     fs.writeFile("./tables.html",  
@@ -222,7 +226,7 @@ app.delete("/api/clearTables", function(req,res){
             
                 <footer class="footer mt-4">
                     <div class="container">
-                    <p><a href="#" id="clear">Clear Table</a> | <a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API
+                    <p><a href="/api/clearTables" id="clear">Clear Table</a> | <a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API
                         Wait List</a>
                     </p></div>
                 </footer>
@@ -235,8 +239,7 @@ app.delete("/api/clearTables", function(req,res){
     `
     //template ends here 
    
-    )
-    res.sendFile(path.join(__dirname, "./tables.html"));
+    ,()=>{res.sendFile(path.join(__dirname, "./tables.html"));})
 })
 
 
